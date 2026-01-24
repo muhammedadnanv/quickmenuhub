@@ -111,33 +111,42 @@ export type Database = {
       }
       restaurants: {
         Row: {
+          closing_time: string | null
           created_at: string
           currency: string | null
           currency_symbol: string | null
           id: string
+          is_open_today: boolean | null
           name: string
+          opening_time: string | null
           owner_id: string
           slug: string
           tagline: string | null
           updated_at: string
         }
         Insert: {
+          closing_time?: string | null
           created_at?: string
           currency?: string | null
           currency_symbol?: string | null
           id?: string
+          is_open_today?: boolean | null
           name: string
+          opening_time?: string | null
           owner_id: string
           slug: string
           tagline?: string | null
           updated_at?: string
         }
         Update: {
+          closing_time?: string | null
           created_at?: string
           currency?: string | null
           currency_symbol?: string | null
           id?: string
+          is_open_today?: boolean | null
           name?: string
+          opening_time?: string | null
           owner_id?: string
           slug?: string
           tagline?: string | null

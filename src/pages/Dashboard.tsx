@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Loader2,
   ChefHat,
+  Clock,
 } from "lucide-react";
 import {
   Dialog,
@@ -29,6 +30,9 @@ interface Restaurant {
   slug: string;
   tagline: string;
   created_at: string;
+  opening_time: string | null;
+  closing_time: string | null;
+  is_open_today: boolean | null;
 }
 
 const Dashboard = () => {
@@ -42,6 +46,8 @@ const Dashboard = () => {
   const [newRestaurant, setNewRestaurant] = useState({
     name: "",
     tagline: "Fresh • Local • Delicious",
+    opening_time: "09:00",
+    closing_time: "22:00",
   });
 
   useEffect(() => {
@@ -97,6 +103,8 @@ const Dashboard = () => {
         slug,
         tagline: newRestaurant.tagline,
         owner_id: user.id,
+        opening_time: newRestaurant.opening_time,
+        closing_time: newRestaurant.closing_time,
       })
       .select()
       .single();
@@ -121,7 +129,7 @@ const Dashboard = () => {
         description: "Your restaurant has been created.",
       });
       setRestaurants([data, ...restaurants]);
-      setNewRestaurant({ name: "", tagline: "Fresh • Local • Delicious" });
+      setNewRestaurant({ name: "", tagline: "Fresh • Local • Delicious", opening_time: "09:00", closing_time: "22:00" });
       setDialogOpen(false);
       navigate(`/dashboard/${data.id}`);
     }
@@ -199,6 +207,31 @@ const Dashboard = () => {
                       setNewRestaurant({ ...newRestaurant, tagline: e.target.value })
                     }
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Operating Hours
+                  </Label>
+                  <div className="flex gap-3 items-center">
+                    <Input
+                      type="time"
+                      value={newRestaurant.opening_time}
+                      onChange={(e) =>
+                        setNewRestaurant({ ...newRestaurant, opening_time: e.target.value })
+                      }
+                      className="flex-1"
+                    />
+                    <span className="text-muted-foreground">to</span>
+                    <Input
+                      type="time"
+                      value={newRestaurant.closing_time}
+                      onChange={(e) =>
+                        setNewRestaurant({ ...newRestaurant, closing_time: e.target.value })
+                      }
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={creating}>
                   {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

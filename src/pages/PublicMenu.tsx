@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart, Loader2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Flame, Leaf, Star, Wheat } from "lucide-react";
 
@@ -11,6 +11,9 @@ interface Restaurant {
   slug: string;
   tagline: string;
   currency_symbol: string;
+  opening_time: string | null;
+  closing_time: string | null;
+  is_open_today: boolean | null;
 }
 
 interface Category {
@@ -127,6 +130,32 @@ const PublicMenu = () => {
     }
   };
 
+  // Calculate if restaurant is currently open - must be before early returns
+  const isCurrentlyOpen = useMemo(() => {
+    if (!restaurant?.is_open_today) return false;
+    if (!restaurant?.opening_time || !restaurant?.closing_time) return true;
+
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    const [openHour, openMin] = restaurant.opening_time.split(":").map(Number);
+    const [closeHour, closeMin] = restaurant.closing_time.split(":").map(Number);
+
+    const openTime = openHour * 60 + openMin;
+    const closeTime = closeHour * 60 + closeMin;
+
+    return currentTime >= openTime && currentTime <= closeTime;
+  }, [restaurant]);
+
+  const formatTime = (time: string | null) => {
+    if (!time) return "";
+    const [hours, minutes] = time.split(":");
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -161,6 +190,31 @@ const PublicMenu = () => {
               <p className="text-sm text-muted-foreground font-body mt-0.5">
                 {restaurant?.tagline}
               </p>
+              {/* Operating Hours */}
+              {restaurant?.opening_time && restaurant?.closing_time && (
+                <div className="flex items-center gap-2 mt-2">
+                  <div
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
+                      isCurrentlyOpen
+                        ? "bg-accent/15 text-accent"
+                        : "bg-destructive/15 text-destructive"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "w-2 h-2 rounded-full animate-pulse",
+                        isCurrentlyOpen ? "bg-accent" : "bg-destructive"
+                      )}
+                    />
+                    {isCurrentlyOpen ? "Open Now" : "Closed"}
+                  </div>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {formatTime(restaurant.opening_time)} - {formatTime(restaurant.closing_time)}
+                  </span>
+                </div>
+              )}
             </div>
             <a
               href="https://razorpay.me/@adnan4402"
