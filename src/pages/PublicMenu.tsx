@@ -28,6 +28,7 @@ interface MenuItem {
   price: number;
   tags: string[];
   is_available: boolean;
+  is_special: boolean;
 }
 
 const tagConfig: Record<string, { icon: any; label: string; className: string }> = {
@@ -209,6 +210,77 @@ const PublicMenu = () => {
           </div>
         ) : (
           <div className="space-y-10">
+            {/* Today's Specials Section */}
+            {menuItems.filter((item) => item.is_special).length > 0 && (
+              <section className="scroll-mt-36">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">⭐</span>
+                  <h2 className="font-display text-xl md:text-2xl font-semibold text-foreground">
+                    Today's Specials
+                  </h2>
+                  <div className="flex-1 h-px bg-gradient-to-r from-amber-400 to-transparent" />
+                </div>
+                <div className="space-y-3">
+                  {menuItems
+                    .filter((item) => item.is_special)
+                    .map((item, index) => {
+                      const category = categories.find((c) => c.id === item.category_id);
+                      return (
+                        <div
+                          key={item.id}
+                          className="group p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 hover:shadow-lg transition-all duration-300 animate-slide-up"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-amber-500">⭐</span>
+                                <h3 className="font-display text-lg font-medium text-foreground">
+                                  {item.name}
+                                </h3>
+                                {category && (
+                                  <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-full">
+                                    {category.icon} {category.name}
+                                  </span>
+                                )}
+                                {item.tags?.map((tag) => {
+                                  const config = tagConfig[tag];
+                                  if (!config) return null;
+                                  const Icon = config.icon;
+                                  return (
+                                    <span
+                                      key={tag}
+                                      className={cn(
+                                        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
+                                        config.className
+                                      )}
+                                    >
+                                      <Icon className="w-3 h-3" />
+                                      {config.label}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                              {item.description && (
+                                <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex-shrink-0">
+                              <span className="font-display text-lg font-semibold text-amber-600 dark:text-amber-400">
+                                {restaurant?.currency_symbol}
+                                {item.price}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </section>
+            )}
+
             {categories.map((category) => {
               const items = menuItems.filter(
                 (item) => item.category_id === category.id
