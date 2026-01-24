@@ -56,6 +56,7 @@ export type Database = {
           description: string | null
           id: string
           is_available: boolean | null
+          is_special: boolean | null
           name: string
           price: number
           restaurant_id: string
@@ -69,6 +70,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_available?: boolean | null
+          is_special?: boolean | null
           name: string
           price: number
           restaurant_id: string
@@ -82,6 +84,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_available?: boolean | null
+          is_special?: boolean | null
           name?: string
           price?: number
           restaurant_id?: string

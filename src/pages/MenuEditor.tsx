@@ -56,6 +56,7 @@ interface MenuItem {
   price: number;
   tags: string[];
   is_available: boolean;
+  is_special: boolean;
 }
 
 const ICONS = ["🍽️", "🥗", "🍛", "🍕", "🍔", "🌮", "🍜", "🍣", "☕", "🍰", "🍹", "🍺"];
@@ -87,6 +88,7 @@ const MenuEditor = () => {
     description: "",
     price: "",
     tags: [] as string[],
+    is_special: false,
   });
 
   useEffect(() => {
@@ -217,6 +219,7 @@ const MenuEditor = () => {
       description: itemForm.description || null,
       price: parseFloat(itemForm.price),
       tags: itemForm.tags,
+      is_special: itemForm.is_special,
     };
 
     if (editingItem) {
@@ -255,7 +258,7 @@ const MenuEditor = () => {
     }
 
     setItemDialogOpen(false);
-    setItemForm({ category_id: "", name: "", description: "", price: "", tags: [] });
+    setItemForm({ category_id: "", name: "", description: "", price: "", tags: [], is_special: false });
     setEditingItem(null);
     setSaving(false);
   };
@@ -285,6 +288,7 @@ const MenuEditor = () => {
       description: item.description || "",
       price: item.price.toString(),
       tags: item.tags || [],
+      is_special: item.is_special || false,
     });
     setItemDialogOpen(true);
   };
@@ -297,6 +301,7 @@ const MenuEditor = () => {
       description: "",
       price: "",
       tags: [],
+      is_special: false,
     });
     setItemDialogOpen(true);
   };
@@ -551,6 +556,23 @@ const MenuEditor = () => {
                       ))}
                     </div>
                   </div>
+                  <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <Checkbox
+                      id="isSpecial"
+                      checked={itemForm.is_special}
+                      onCheckedChange={(checked) =>
+                        setItemForm({ ...itemForm, is_special: !!checked })
+                      }
+                    />
+                    <div className="flex-1">
+                      <Label htmlFor="isSpecial" className="cursor-pointer font-medium text-amber-800 dark:text-amber-200">
+                        ⭐ Today's Special
+                      </Label>
+                      <p className="text-xs text-amber-600 dark:text-amber-400">
+                        Highlight this item at the top of your menu
+                      </p>
+                    </div>
+                  </div>
                   <Button type="submit" className="w-full" disabled={saving}>
                     {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {editingItem ? "Update Item" : "Add Item"}
@@ -598,11 +620,14 @@ const MenuEditor = () => {
                       {items.map((item) => (
                         <div
                           key={item.id}
-                          className="bg-card border border-border rounded-lg p-4 flex items-center justify-between hover:shadow-card transition-shadow cursor-pointer"
+                          className={`bg-card border rounded-lg p-4 flex items-center justify-between hover:shadow-card transition-shadow cursor-pointer ${
+                            item.is_special ? "border-amber-400 bg-amber-50/50 dark:bg-amber-950/20" : "border-border"
+                          }`}
                           onClick={() => openEditItem(item)}
                         >
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
+                              {item.is_special && <span className="text-amber-500">⭐</span>}
                               <span className="font-medium">{item.name}</span>
                               {item.tags?.map((tag) => (
                                 <span
