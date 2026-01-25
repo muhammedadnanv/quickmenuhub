@@ -14,6 +14,8 @@ interface Restaurant {
   opening_time: string | null;
   closing_time: string | null;
   is_open_today: boolean | null;
+  logo_url: string | null;
+  cover_image_url: string | null;
 }
 
 interface Category {
@@ -179,42 +181,66 @@ const PublicMenu = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Cover Image */}
+      {restaurant?.cover_image_url && (
+        <div className="w-full h-40 md:h-56 overflow-hidden">
+          <img
+            src={restaurant.cover_image_url}
+            alt={`${restaurant.name} cover`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <header className={cn(
+        "sticky z-50 bg-background/95 backdrop-blur-sm border-b border-border",
+        restaurant?.cover_image_url ? "top-0" : "top-0"
+      )}>
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h1 className="font-display text-2xl md:text-3xl font-semibold text-foreground tracking-tight">
-                {restaurant?.name}
-              </h1>
-              <p className="text-sm text-muted-foreground font-body mt-0.5">
-                {restaurant?.tagline}
-              </p>
-              {/* Operating Hours */}
-              {restaurant?.opening_time && restaurant?.closing_time && (
-                <div className="flex items-center gap-2 mt-2">
-                  <div
-                    className={cn(
-                      "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
-                      isCurrentlyOpen
-                        ? "bg-accent/15 text-accent"
-                        : "bg-destructive/15 text-destructive"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "w-2 h-2 rounded-full animate-pulse",
-                        isCurrentlyOpen ? "bg-accent" : "bg-destructive"
-                      )}
-                    />
-                    {isCurrentlyOpen ? "Open Now" : "Closed"}
-                  </div>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {formatTime(restaurant.opening_time)} - {formatTime(restaurant.closing_time)}
-                  </span>
-                </div>
+            <div className="flex items-center gap-4 flex-1">
+              {/* Logo */}
+              {restaurant?.logo_url && (
+                <img
+                  src={restaurant.logo_url}
+                  alt={`${restaurant.name} logo`}
+                  className="w-14 h-14 rounded-xl object-cover border border-border shadow-soft"
+                />
               )}
+              <div className="flex-1">
+                <h1 className="font-display text-2xl md:text-3xl font-semibold text-foreground tracking-tight">
+                  {restaurant?.name}
+                </h1>
+                <p className="text-sm text-muted-foreground font-body mt-0.5">
+                  {restaurant?.tagline}
+                </p>
+                {/* Operating Hours */}
+                {restaurant?.opening_time && restaurant?.closing_time && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <div
+                      className={cn(
+                        "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
+                        isCurrentlyOpen
+                          ? "bg-accent/15 text-accent"
+                          : "bg-destructive/15 text-destructive"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "w-2 h-2 rounded-full animate-pulse",
+                          isCurrentlyOpen ? "bg-accent" : "bg-destructive"
+                        )}
+                      />
+                      {isCurrentlyOpen ? "Open Now" : "Closed"}
+                    </div>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {formatTime(restaurant.opening_time)} - {formatTime(restaurant.closing_time)}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
             <a
               href="https://razorpay.me/@adnan4402"
