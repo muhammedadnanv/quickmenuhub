@@ -15,6 +15,7 @@ import {
   Loader2,
   ChefHat,
   Clock,
+  Settings,
 } from "lucide-react";
 import {
   Dialog,
@@ -23,6 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import RestaurantSettings from "@/components/restaurant/RestaurantSettings";
 
 interface Restaurant {
   id: string;
@@ -33,6 +35,8 @@ interface Restaurant {
   opening_time: string | null;
   closing_time: string | null;
   is_open_today: boolean | null;
+  logo_url: string | null;
+  cover_image_url: string | null;
 }
 
 const Dashboard = () => {
@@ -43,6 +47,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [newRestaurant, setNewRestaurant] = useState({
     name: "",
     tagline: "Fresh • Local • Delicious",
@@ -264,15 +270,38 @@ const Dashboard = () => {
                 className="bg-card border border-border rounded-xl p-5 hover:shadow-card transition-shadow"
               >
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-display text-lg font-semibold">
-                      {restaurant.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {restaurant.tagline}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    {restaurant.logo_url ? (
+                      <img
+                        src={restaurant.logo_url}
+                        alt={restaurant.name}
+                        className="w-12 h-12 rounded-lg object-cover border border-border"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Store className="w-6 h-6 text-primary" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-display text-lg font-semibold">
+                        {restaurant.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {restaurant.tagline}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedRestaurant(restaurant);
+                        setSettingsOpen(true);
+                      }}
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link to={`/menu/${restaurant.slug}`} target="_blank">
                         <ExternalLink className="w-4 h-4 mr-2" />
@@ -294,6 +323,22 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Settings Dialog */}
+        {selectedRestaurant && user && (
+          <RestaurantSettings
+            restaurant={selectedRestaurant}
+            userId={user.id}
+            open={settingsOpen}
+            onOpenChange={setSettingsOpen}
+            onUpdate={(updated) => {
+              setRestaurants(
+                restaurants.map((r) => (r.id === updated.id ? updated : r))
+              );
+              setSelectedRestaurant(null);
+            }}
+          />
         )}
       </main>
     </div>
