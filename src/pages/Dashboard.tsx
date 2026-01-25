@@ -16,6 +16,7 @@ import {
   ChefHat,
   Clock,
   Settings,
+  Trash2,
 } from "lucide-react";
 import {
   Dialog,
@@ -24,6 +25,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import RestaurantSettings from "@/components/restaurant/RestaurantSettings";
 
 interface Restaurant {
@@ -146,6 +158,40 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const deleteRestaurant = async (restaurantId: string) => {
+    // First delete all menu items for this restaurant
+    await supabase
+      .from("menu_items")
+      .delete()
+      .eq("restaurant_id", restaurantId);
+
+    // Then delete all categories
+    await supabase
+      .from("menu_categories")
+      .delete()
+      .eq("restaurant_id", restaurantId);
+
+    // Finally delete the restaurant
+    const { error } = await supabase
+      .from("restaurants")
+      .delete()
+      .eq("id", restaurantId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete restaurant",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Deleted",
+        description: "Restaurant has been removed.",
+      });
+      setRestaurants(restaurants.filter((r) => r.id !== restaurantId));
+    }
   };
 
   if (authLoading || loading) {
@@ -302,6 +348,30 @@ const Dashboard = () => {
                     >
                       <Settings className="w-4 h-4" />
                     </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="font-display">Delete Restaurant?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete <strong>{restaurant.name}</strong> and all its menu items and categories. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteRestaurant(restaurant.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button variant="outline" size="sm" asChild>
                       <Link to={`/menu/${restaurant.slug}`} target="_blank">
                         <ExternalLink className="w-4 h-4 mr-2" />
