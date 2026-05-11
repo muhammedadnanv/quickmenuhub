@@ -211,7 +211,7 @@ const Dashboard = () => {
               <ChefHat className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="font-display text-xl font-semibold">Dashboard</h1>
+              <h1 className="font-display text-xl font-semibold">BrewDesk</h1>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>
@@ -384,9 +384,7 @@ const Dashboard = () => {
                       </Link>
                     </Button>
                     <Button size="sm" asChild>
-                      <Link to={`/dashboard/${restaurant.id}`}>
-                        Edit Menu
-                      </Link>
+                      <Link to={`/cafe/${restaurant.id}/pos`}>Open Workspace</Link>
                     </Button>
                   </div>
                 </div>
