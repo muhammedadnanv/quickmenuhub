@@ -30,7 +30,7 @@ const Index = () => {
         <div className="container max-w-5xl mx-auto px-4 text-center">
           <div className="animate-fade-in">
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              No app download • No backend • Just scan
+              POS • Orders • Billing • Sales analytics
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
               Create Your BrewDesk
@@ -38,9 +38,9 @@ const Index = () => {
               <span className="text-primary">in Minutes</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              The simplest way for restaurants and cafés to create a mobile-friendly
-              menu. Customers scan a QR code and instantly view your menu - no app
-              needed.
+              BrewDesk is the all-in-one café management system: take orders, generate
+              accurate bills, manage your menu, and track real-time sales — optimized
+              for tablets and desktops behind the counter.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" className="text-lg px-8" asChild>
