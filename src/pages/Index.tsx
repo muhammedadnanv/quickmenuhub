@@ -12,7 +12,7 @@ const Index = () => {
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <ChefHat className="w-5 h-5 text-primary" />
             </div>
-            <span className="font-display text-xl font-semibold">Digital Menu</span>
+            <span className="font-display text-xl font-semibold">BrewDesk</span>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
@@ -33,7 +33,7 @@ const Index = () => {
               No app download • No backend • Just scan
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
-              Create Your Digital Menu
+              Create Your BrewDesk
               <br />
               <span className="text-primary">in Minutes</span>
             </h1>
@@ -67,7 +67,7 @@ const Index = () => {
       <section className="py-16 bg-muted/50">
         <div className="container max-w-5xl mx-auto px-4">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">
-            Why Choose Digital Menu?
+            Why Choose BrewDesk?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-card border border-border rounded-2xl p-6 text-center animate-slide-up">
@@ -176,7 +176,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <ChefHat className="w-5 h-5 text-primary" />
-              <span className="font-display font-semibold">Digital Menu</span>
+              <span className="font-display font-semibold">BrewDesk</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Simple QR menu solution for restaurants & cafés
