@@ -1,200 +1,107 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChefHat, QrCode, Smartphone, Edit, ArrowRight, Heart } from "lucide-react";
+import { Coffee, ShoppingCart, BarChart3, Receipt, ShieldCheck, Crown, Check, ArrowRight } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border">
-        <div className="container max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <ChefHat className="w-5 h-5 text-primary" />
+              <Coffee className="w-5 h-5 text-primary" />
             </div>
             <span className="font-display text-xl font-semibold">Quick Menu Hub</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link to="/auth">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/auth">Get Started</Link>
-            </Button>
-          </div>
+          <Button asChild><Link to="/auth">Sign in</Link></Button>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="py-16 md:py-24">
-        <div className="container max-w-5xl mx-auto px-4 text-center">
-          <div className="animate-fade-in">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              POS • Orders • Billing • Sales analytics
-            </span>
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
-              Create Your Quick Menu Hub
-              <br />
-              <span className="text-primary">in Minutes</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Quick Menu Hub is the all-in-one café management system: take orders, generate
-              accurate bills, manage your menu, and track real-time sales — optimized
-              for tablets and desktops behind the counter.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="text-lg px-8" asChild>
-                <Link to="/auth">
-                  Create Your Menu Free
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-              <a
-                href="https://razorpay.me/@adnan4402"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border hover:bg-secondary transition-colors font-medium"
-              >
-                <Heart className="w-5 h-5 text-primary" />
-                Support Us
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 bg-muted/50">
-        <div className="container max-w-5xl mx-auto px-4">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">
-            Why Choose Quick Menu Hub?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-card border border-border rounded-2xl p-6 text-center animate-slide-up">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <QrCode className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">
-                Instant QR Code
-              </h3>
-              <p className="text-muted-foreground">
-                Get a unique QR code for your restaurant. Print it and place on
-                tables - customers scan to view your menu instantly.
-              </p>
-            </div>
-
-            <div
-              className="bg-card border border-border rounded-2xl p-6 text-center animate-slide-up"
-              style={{ animationDelay: "100ms" }}
-            >
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Smartphone className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">
-                Mobile Friendly
-              </h3>
-              <p className="text-muted-foreground">
-                Beautiful, fast-loading menu that works perfectly on any phone.
-                No app download required - opens right in the browser.
-              </p>
-            </div>
-
-            <div
-              className="bg-card border border-border rounded-2xl p-6 text-center animate-slide-up"
-              style={{ animationDelay: "200ms" }}
-            >
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Edit className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">
-                Easy to Update
-              </h3>
-              <p className="text-muted-foreground">
-                Add, edit, or remove items anytime. Changes appear instantly on
-                your menu - no reprinting needed.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16">
-        <div className="container max-w-5xl mx-auto px-4">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">
-            Get Started in 3 Steps
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-display text-xl font-bold flex items-center justify-center mx-auto mb-4">
-                1
-              </div>
-              <h3 className="font-display text-lg font-semibold mb-2">
-                Create Account
-              </h3>
-              <p className="text-muted-foreground">
-                Sign up for free and add your restaurant details.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-display text-xl font-bold flex items-center justify-center mx-auto mb-4">
-                2
-              </div>
-              <h3 className="font-display text-lg font-semibold mb-2">
-                Add Your Menu
-              </h3>
-              <p className="text-muted-foreground">
-                Add categories and items with prices, descriptions, and tags.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-display text-xl font-bold flex items-center justify-center mx-auto mb-4">
-                3
-              </div>
-              <h3 className="font-display text-lg font-semibold mb-2">
-                Share QR Code
-              </h3>
-              <p className="text-muted-foreground">
-                Download your QR code, print it, and place it on tables.
-              </p>
-            </div>
-          </div>
-          <div className="text-center mt-12">
-            <Button size="lg" asChild>
-              <Link to="/auth">
-                Start Creating Now
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
+      <section className="py-20 md:py-28">
+        <div className="container max-w-4xl mx-auto px-4 text-center">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+            <Crown className="w-4 h-4" /> Premium SaaS for cafés & restaurants
+          </span>
+          <h1 className="font-display text-4xl md:text-6xl font-bold leading-tight mb-6">
+            The complete café operating system,
+            <br /><span className="text-primary">priced for serious brands.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+            POS, billing, real-time orders, printable receipts, menu administration and sales analytics —
+            in one polished workspace built for the counter.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button size="lg" className="text-lg px-8" asChild>
+              <Link to="/auth">Sign in to your café <ArrowRight className="w-5 h-5 ml-2" /></Link>
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground mt-4">
+            Accounts are provisioned by Quick Menu Hub. Contact us for onboarding.
+          </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container max-w-5xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <ChefHat className="w-5 h-5 text-primary" />
-              <span className="font-display font-semibold">Quick Menu Hub</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Simple QR menu solution for restaurants & cafés
-            </p>
-            <a
-              href="https://razorpay.me/@adnan4402"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Heart className="w-4 h-4" />
-              Support / Donate
-            </a>
+      <section className="py-16 bg-muted/40">
+        <div className="container max-w-6xl mx-auto px-4">
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">Built to run a serious café</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Feature icon={<ShoppingCart />} title="Touch POS" text="Two-pane ordering, instant cart, discounts and tax handled correctly." />
+            <Feature icon={<Receipt />} title="Printable receipts" text="Thermal-style receipts with brand, GST and totals — one click to print." />
+            <Feature icon={<BarChart3 />} title="Sales analytics" text="Daily, weekly and monthly revenue, top items and live order pulse." />
+            <Feature icon={<Coffee />} title="Menu administration" text="Categories, item images, availability, today's specials and price control." />
+            <Feature icon={<ShieldCheck />} title="Role-based security" text="Admin-controlled brand accounts, encrypted passwords, protected routes." />
+            <Feature icon={<Crown />} title="Premium support" text="Direct onboarding from our team. No DIY signup, no noise." />
           </div>
+        </div>
+      </section>
+
+      <section className="py-20">
+        <div className="container max-w-3xl mx-auto px-4">
+          <div className="bg-card border border-primary/20 rounded-3xl p-8 md:p-12 text-center shadow-soft">
+            <Crown className="w-10 h-10 text-primary mx-auto mb-4" />
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">Premium subscription</h2>
+            <p className="text-muted-foreground mb-6">Single transparent plan. Everything included.</p>
+            <div className="flex items-baseline justify-center gap-2 mb-6">
+              <span className="font-display text-6xl font-bold">₹1,599</span>
+              <span className="text-muted-foreground text-lg">/ month, per café</span>
+            </div>
+            <ul className="grid sm:grid-cols-2 gap-3 text-left max-w-md mx-auto mb-8">
+              {[
+                "Unlimited orders & menu items",
+                "Printable GST-ready receipts",
+                "Real-time order updates",
+                "Sales reports & top items",
+                "Public QR menu",
+                "Razorpay-powered renewals",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm">
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <Button size="lg" asChild><Link to="/auth">Sign in <ArrowRight className="w-5 h-5 ml-2" /></Link></Button>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border py-8">
+        <div className="container max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2"><Coffee className="w-4 h-4 text-primary" /><span className="font-display font-semibold text-foreground">Quick Menu Hub</span></div>
+          <p>Premium café & restaurant management · Powered by Razorpay</p>
         </div>
       </footer>
     </div>
   );
 };
+
+function Feature({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+  return (
+    <div className="bg-card border border-border rounded-2xl p-6">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 text-primary">{icon}</div>
+      <h3 className="font-display text-lg font-semibold mb-1">{title}</h3>
+      <p className="text-sm text-muted-foreground">{text}</p>
+    </div>
+  );
+}
 
 export default Index;
