@@ -141,9 +141,9 @@ export default function CafeLayout() {
           <SidebarFooter className="p-2 border-t">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/dashboard")}>
+                <SidebarMenuButton onClick={() => navigate(role === "super_admin" ? "/admin" : "/")}>
                   <ArrowLeft className="w-4 h-4" />
-                  <span>All cafés</span>
+                  <span>{role === "super_admin" ? "All cafés" : "Home"}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
