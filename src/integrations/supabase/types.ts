@@ -230,92 +230,158 @@ export type Database = {
       }
       restaurants: {
         Row: {
+          address: string | null
           closing_time: string | null
           cover_image_url: string | null
           created_at: string
           currency: string | null
           currency_symbol: string | null
+          current_period_end: string | null
           default_prep_minutes: number | null
+          email: string | null
+          gst_number: string | null
           id: string
           is_open_today: boolean | null
           logo_url: string | null
           name: string
           opening_time: string | null
           owner_id: string
+          phone: string | null
           slug: string
+          subscription_status: string
           tagline: string | null
           tax_percent: number | null
           updated_at: string
+          upi_id: string | null
+          username: string | null
+          website_url: string | null
         }
         Insert: {
+          address?: string | null
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string
           currency?: string | null
           currency_symbol?: string | null
+          current_period_end?: string | null
           default_prep_minutes?: number | null
+          email?: string | null
+          gst_number?: string | null
           id?: string
           is_open_today?: boolean | null
           logo_url?: string | null
           name: string
           opening_time?: string | null
           owner_id: string
+          phone?: string | null
           slug: string
+          subscription_status?: string
           tagline?: string | null
           tax_percent?: number | null
           updated_at?: string
+          upi_id?: string | null
+          username?: string | null
+          website_url?: string | null
         }
         Update: {
+          address?: string | null
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string
           currency?: string | null
           currency_symbol?: string | null
+          current_period_end?: string | null
           default_prep_minutes?: number | null
+          email?: string | null
+          gst_number?: string | null
           id?: string
           is_open_today?: boolean | null
           logo_url?: string | null
           name?: string
           opening_time?: string | null
           owner_id?: string
+          phone?: string | null
           slug?: string
+          subscription_status?: string
           tagline?: string | null
           tax_percent?: number | null
           updated_at?: string
+          upi_id?: string | null
+          username?: string | null
+          website_url?: string | null
         }
         Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          amount: number
+          cafe_id: string
+          created_at: string
+          currency: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number
+          cafe_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          cafe_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_cafe_id_fkey"
+            columns: ["cafe_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
           created_at: string
           id: string
-          restaurant_id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          restaurant_id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          restaurant_id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_restaurant_id_fkey"
-            columns: ["restaurant_id"]
-            isOneToOne: false
-            referencedRelation: "restaurants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -325,19 +391,14 @@ export type Database = {
       generate_unique_slug: { Args: { base_name: string }; Returns: string }
       has_role: {
         Args: {
-          _restaurant_id: string
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
       }
-      is_restaurant_member: {
-        Args: { _restaurant_id: string; _user_id: string }
-        Returns: boolean
-      }
     }
     Enums: {
-      app_role: "admin" | "staff"
+      app_role: "super_admin" | "cafe_owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -465,7 +526,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "staff"],
+      app_role: ["super_admin", "cafe_owner"],
     },
   },
 } as const
