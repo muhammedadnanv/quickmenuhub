@@ -160,7 +160,7 @@ export default function CafeLayout() {
           <header className="h-12 flex items-center border-b border-border px-3 gap-2 bg-card">
             <SidebarTrigger />
             <div className="font-display font-semibold truncate">{restaurant.name}</div>
-            <span className="text-xs text-muted-foreground hidden sm:inline">— BrewDesk Café Management</span>
+            <span className="text-xs text-muted-foreground hidden sm:inline">— Quick Menu Hub Café Management</span>
           </header>
           <main className="flex-1 overflow-auto">
             <Outlet context={{ restaurant, role, refresh: load } satisfies CafeContext} />

@@ -6,9 +6,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Clock, CheckCircle2, ChefHat, Bell, X, Loader2 } from "lucide-react";
+import { Clock, CheckCircle2, ChefHat, Bell, X, Loader2, Printer } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
+import Receipt from "@/components/cafe/Receipt";
 
 interface Order {
   id: string; order_number: number; status: string; customer_name: string | null;
@@ -30,6 +31,7 @@ export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
   const symbol = restaurant.currency_symbol || "$";
 
   const fetchAll = async () => {
@@ -48,6 +50,7 @@ export default function Orders() {
     fetchAll();
     const ch = supabase.channel("orders-" + restaurant.id)
       .on("postgres_changes", { event: "*", schema: "public", table: "orders", filter: `restaurant_id=eq.${restaurant.id}` }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "order_items" }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,6 +103,14 @@ export default function Orders() {
             {o.status !== "completed" && (
               <Button size="sm" variant="outline" className="text-destructive" onClick={() => updateStatus(o.id, "cancelled")}><X className="w-3 h-3" /></Button>
             )}
+            <Button size="sm" variant="outline" onClick={() => setReceiptOrder(o)}><Printer className="w-3 h-3" /></Button>
+          </div>
+        )}
+        {!meta.next && (
+          <div className="flex gap-2 mt-3">
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => setReceiptOrder(o)}>
+              <Printer className="w-3 h-3 mr-2" />Print receipt
+            </Button>
           </div>
         )}
       </Card>
@@ -134,6 +145,13 @@ export default function Orders() {
           )}
         </TabsContent>
       </Tabs>
+      <Receipt
+        open={!!receiptOrder}
+        onOpenChange={(v) => !v && setReceiptOrder(null)}
+        order={receiptOrder as any}
+        items={receiptOrder ? items[receiptOrder.id] || [] : []}
+        restaurant={restaurant}
+      />
     </div>
   );
 }
