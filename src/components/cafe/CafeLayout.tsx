@@ -19,6 +19,7 @@ import {
 import { Coffee, ShoppingCart, ListOrdered, BookOpen, BarChart3, Settings, LogOut, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import SubscriptionPaywall from "./SubscriptionPaywall";
 
 export interface CafeContext {
   restaurant: any;
