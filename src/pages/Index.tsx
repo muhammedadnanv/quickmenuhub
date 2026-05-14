@@ -12,7 +12,7 @@ const Index = () => {
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <ChefHat className="w-5 h-5 text-primary" />
             </div>
-            <span className="font-display text-xl font-semibold">BrewDesk</span>
+            <span className="font-display text-xl font-semibold">Quick Menu Hub</span>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
@@ -33,12 +33,12 @@ const Index = () => {
               POS • Orders • Billing • Sales analytics
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
-              Create Your BrewDesk
+              Create Your Quick Menu Hub
               <br />
               <span className="text-primary">in Minutes</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              BrewDesk is the all-in-one café management system: take orders, generate
+              Quick Menu Hub is the all-in-one café management system: take orders, generate
               accurate bills, manage your menu, and track real-time sales — optimized
               for tablets and desktops behind the counter.
             </p>
@@ -67,7 +67,7 @@ const Index = () => {
       <section className="py-16 bg-muted/50">
         <div className="container max-w-5xl mx-auto px-4">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">
-            Why Choose BrewDesk?
+            Why Choose Quick Menu Hub?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-card border border-border rounded-2xl p-6 text-center animate-slide-up">
@@ -176,7 +176,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <ChefHat className="w-5 h-5 text-primary" />
-              <span className="font-display font-semibold">BrewDesk</span>
+              <span className="font-display font-semibold">Quick Menu Hub</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Simple QR menu solution for restaurants & cafés

@@ -211,7 +211,7 @@ const Dashboard = () => {
               <ChefHat className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="font-display text-xl font-semibold">BrewDesk</h1>
+              <h1 className="font-display text-xl font-semibold">Quick Menu Hub</h1>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>

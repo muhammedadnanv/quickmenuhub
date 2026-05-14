@@ -68,6 +68,6 @@ Transform the current restaurant menu builder into an in-café operations system
 7. Menu admin upgrade (image upload, availability toggle, tax rate)
 8. Reports screen with Recharts
 9. Settings: staff invites
-10. Rebrand landing + favicon copy as "BrewDesk – Café Management"
+10. Rebrand landing + favicon copy as "Quick Menu Hub – Café Management"
 
 After approval I will start with the migration.
