@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 
 export interface CafeContext {
   restaurant: any;
-  role: "admin" | "staff";
+  role: "owner" | "super_admin";
   refresh: () => void;
 }
 
@@ -30,12 +30,12 @@ function NavItems({ role, restaurantId }: { role: string; restaurantId: string }
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const items = [
-    { to: `/cafe/${restaurantId}/pos`, label: "POS", icon: ShoppingCart, roles: ["admin", "staff"] },
-    { to: `/cafe/${restaurantId}/orders`, label: "Orders", icon: ListOrdered, roles: ["admin", "staff"] },
-    { to: `/cafe/${restaurantId}/menu`, label: "Menu", icon: BookOpen, roles: ["admin"] },
-    { to: `/cafe/${restaurantId}/reports`, label: "Reports", icon: BarChart3, roles: ["admin"] },
-    { to: `/cafe/${restaurantId}/settings`, label: "Settings", icon: Settings, roles: ["admin"] },
-  ].filter((i) => i.roles.includes(role));
+    { to: `/cafe/${restaurantId}/pos`, label: "POS", icon: ShoppingCart },
+    { to: `/cafe/${restaurantId}/orders`, label: "Orders", icon: ListOrdered },
+    { to: `/cafe/${restaurantId}/menu`, label: "Menu", icon: BookOpen },
+    { to: `/cafe/${restaurantId}/reports`, label: "Reports", icon: BarChart3 },
+    { to: `/cafe/${restaurantId}/settings`, label: "Settings", icon: Settings },
+  ];
 
   return (
     <SidebarMenu>
@@ -64,8 +64,9 @@ export default function CafeLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [restaurant, setRestaurant] = useState<any>(null);
-  const [role, setRole] = useState<"admin" | "staff" | null>(null);
+  const [role, setRole] = useState<"owner" | "super_admin" | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subActive, setSubActive] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -75,24 +76,18 @@ export default function CafeLayout() {
     if (!user || !restaurantId) return;
     const { data: r } = await supabase.from("restaurants").select("*").eq("id", restaurantId).maybeSingle();
     if (!r) {
-      navigate("/dashboard");
+      navigate("/admin");
       return;
     }
     setRestaurant(r);
-    if (r.owner_id === user.id) {
-      setRole("admin");
-    } else {
-      const { data: rl } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("restaurant_id", restaurantId);
-      if (!rl || rl.length === 0) {
-        navigate("/dashboard");
-        return;
-      }
-      setRole(rl.some((x) => x.role === "admin") ? "admin" : "staff");
-    }
+    const { data: rl } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+    const isSuper = rl?.role === "super_admin";
+    if (isSuper) setRole("super_admin");
+    else if (r.owner_id === user.id) setRole("owner");
+    else { navigate("/auth"); return; }
+    // Subscription check (super admin always allowed)
+    const active = isSuper || (r.subscription_status === "active" && r.current_period_end && new Date(r.current_period_end) > new Date());
+    setSubActive(active);
     setLoading(false);
   };
 
@@ -114,6 +109,10 @@ export default function CafeLayout() {
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (!subActive) {
+    return <SubscriptionPaywall restaurant={restaurant} onPaid={load} onSignOut={async () => { await signOut(); navigate("/"); }} />;
   }
 
   return (
