@@ -160,3 +160,18 @@
     }
   }
 }
+
+/* Print: show only the receipt area when printing */
+@media print {
+  body * { visibility: hidden !important; }
+  #receipt-print-area, #receipt-print-area * { visibility: visible !important; }
+  #receipt-print-area {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    padding: 16px !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+  @page { margin: 8mm; }
+}
