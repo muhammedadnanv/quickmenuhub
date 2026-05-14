@@ -6,8 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import MenuEditor from "./pages/MenuEditor";
 import PublicMenu from "./pages/PublicMenu";
 import PublicQRCode from "./pages/PublicQRCode";
 import NotFound from "./pages/NotFound";
@@ -17,6 +15,7 @@ import OrdersPage from "./pages/cafe/Orders";
 import MenuAdmin from "./pages/cafe/MenuAdmin";
 import Reports from "./pages/cafe/Reports";
 import CafeSettings from "./pages/cafe/CafeSettings";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/:restaurantId" element={<MenuEditor />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/cafe/:restaurantId" element={<CafeLayout />}>
               <Route index element={<POS />} />
               <Route path="pos" element={<POS />} />
