@@ -1,111 +1,107 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ChefHat } from "lucide-react";
+import { Loader2, Crown, Coffee } from "lucide-react";
+
+const SYNTH_DOMAIN = "cafe.quickmenuhub.app";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [mode, setMode] = useState<"cafe" | "admin">("cafe");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!authLoading && user) routeAfterLogin();
+    // eslint-disable-next-line
+  }, [user, authLoading]);
+
+  const routeAfterLogin = async () => {
+    const { data: { user: u } } = await supabase.auth.getUser();
+    if (!u) return;
+    const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", u.id).maybeSingle();
+    if (role?.role === "super_admin") return navigate("/admin", { replace: true });
+    const { data: cafe } = await supabase.from("restaurants").select("id").eq("owner_id", u.id).maybeSingle();
+    if (cafe) return navigate(`/cafe/${cafe.id}/pos`, { replace: true });
+    toast({ title: "No café linked", description: "Contact the platform admin.", variant: "destructive" });
+    await supabase.auth.signOut();
+  };
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) throw error;
-        navigate("/dashboard");
-      } else {
-        const { error } = await signUp(email, password);
-        if (error) throw error;
-        toast({
-          title: "Account created!",
-          description: "You can now create your restaurant menu.",
-        });
-        navigate("/dashboard");
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+    const email = mode === "admin" ? identifier.trim() : `${identifier.trim().toLowerCase()}@${SYNTH_DOMAIN}`;
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast({ title: "Sign in failed", description: error.message, variant: "destructive" });
+      return;
     }
+    routeAfterLogin();
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <ChefHat className="w-8 h-8 text-primary" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-3">
+            <Coffee className="w-7 h-7 text-primary" />
           </div>
-          <h1 className="font-display text-3xl font-semibold text-foreground">
-            Digital Menu
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            {isLogin
-              ? "Sign in to manage your restaurant menu"
-              : "Create an account to get started"}
-          </p>
+          <h1 className="font-display text-3xl font-semibold">Quick Menu Hub</h1>
+          <p className="text-muted-foreground text-sm mt-1">Premium café management platform</p>
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-6 shadow-soft animate-slide-up">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-soft">
+          <Tabs value={mode} onValueChange={(v) => setMode(v as any)} className="w-full">
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="cafe"><Coffee className="w-4 h-4 mr-1" />Café</TabsTrigger>
+              <TabsTrigger value="admin"><Crown className="w-4 h-4 mr-1" />Admin</TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
+            <TabsContent value="cafe" className="m-0">
+              <form onSubmit={submit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Username</Label>
+                  <Input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="your-cafe-username" required autoCapitalize="none" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Password</Label>
+                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Sign in
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  Café accounts are created by the platform admin. Contact us to onboard.
+                </p>
+              </form>
+            </TabsContent>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? "Sign In" : "Create Account"}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
-            </button>
-          </div>
+            <TabsContent value="admin" className="m-0">
+              <form onSubmit={submit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Admin email</Label>
+                  <Input type="email" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Password</Label>
+                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Sign in as Admin
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
