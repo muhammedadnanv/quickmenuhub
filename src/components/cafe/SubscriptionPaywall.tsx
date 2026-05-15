@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Crown, LogOut } from "lucide-react";
+import { Loader2, Crown, LogOut, Lock, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 declare global { interface Window { Razorpay: any } }
@@ -68,24 +68,32 @@ export default function SubscriptionPaywall({
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="max-w-md w-full p-8 text-center space-y-4">
-        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-          <Crown className="w-7 h-7 text-primary" />
+      <Card className={`max-w-md w-full p-8 text-center space-y-4 ${expired ? "border-destructive/40" : ""}`}>
+        {expired && (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-semibold uppercase tracking-wider mx-auto">
+            <Lock className="w-3 h-3" /> Account blocked
+          </div>
+        )}
+        <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto ${expired ? "bg-destructive/10" : "bg-primary/10"}`}>
+          {expired ? <Lock className="w-7 h-7 text-destructive" /> : <Crown className="w-7 h-7 text-primary" />}
         </div>
         <h1 className="font-display text-2xl font-semibold">
-          {expired ? "Subscription expired" : "Activate your subscription"}
+          {expired ? "Access blocked — payment required" : "Activate your subscription"}
         </h1>
         <p className="text-muted-foreground text-sm">
-          {restaurant.name} requires an active premium subscription to access the workspace.
+          {expired
+            ? `${restaurant.name}'s premium subscription has expired. Renew now to instantly restore POS, orders, menu and reporting access.`
+            : `${restaurant.name} requires an active premium subscription to access the workspace.`}
         </p>
         <div className="bg-muted/50 rounded-lg p-4">
           <div className="text-3xl font-display font-bold">₹1,599<span className="text-base font-normal text-muted-foreground">/month</span></div>
           <p className="text-xs text-muted-foreground mt-1">Full POS · Orders · Menu · Reports · Receipt printing</p>
         </div>
         <Button size="lg" className="w-full" onClick={pay} disabled={loading}>
-          {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-          Pay ₹1,599 with Razorpay
+          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+          {expired ? "Retry payment & renew now" : "Pay ₹1,599 with Razorpay"}
         </Button>
+        <p className="text-[11px] text-muted-foreground">Secured by Razorpay · UPI, cards, netbanking</p>
         <Button variant="ghost" size="sm" className="w-full" onClick={onSignOut}>
           <LogOut className="w-4 h-4 mr-2" /> Sign out
         </Button>
