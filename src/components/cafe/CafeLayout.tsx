@@ -19,6 +19,7 @@ import {
 import { Coffee, ShoppingCart, ListOrdered, BookOpen, BarChart3, Settings, LogOut, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AlertTriangle } from "lucide-react";
 import SubscriptionPaywall from "./SubscriptionPaywall";
 
 export interface CafeContext {
@@ -116,6 +117,11 @@ export default function CafeLayout() {
     return <SubscriptionPaywall restaurant={restaurant} onPaid={load} onSignOut={async () => { await signOut(); navigate("/"); }} />;
   }
 
+  const daysLeft = restaurant.current_period_end
+    ? Math.ceil((new Date(restaurant.current_period_end).getTime() - Date.now()) / 86400000)
+    : null;
+  const showRenewalAlert = role !== "super_admin" && daysLeft !== null && daysLeft <= 7;
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -163,6 +169,18 @@ export default function CafeLayout() {
             <span className="text-xs text-muted-foreground hidden sm:inline">— Quick Menu Hub Café Management</span>
           </header>
           <main className="flex-1 overflow-auto">
+            {showRenewalAlert && (
+              <div className="bg-amber-500/10 border-b border-amber-500/30 px-4 py-2 flex items-center justify-between gap-3 text-sm">
+                <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>
+                    Your premium subscription {daysLeft! <= 0 ? "expires today" : `expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`}.
+                    Renew now to avoid service interruption.
+                  </span>
+                </div>
+                <Button size="sm" onClick={() => navigate(`/cafe/${restaurantId}/settings`)}>Renew now</Button>
+              </div>
+            )}
             <Outlet context={{ restaurant, role, refresh: load } satisfies CafeContext} />
           </main>
         </div>
