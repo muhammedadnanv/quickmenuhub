@@ -29,6 +29,10 @@ interface RestaurantData {
   currency_symbol?: string | null;
   tax_percent?: number | null;
   logo_url?: string | null;
+  gst_number?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
 }
 
 interface ReceiptProps {
@@ -43,6 +47,8 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
   if (!order) return null;
   const symbol = restaurant.currency_symbol || "$";
   const taxPct = Number(restaurant.tax_percent || 0);
+  const halfTax = Number(order.tax) / 2;
+  const invoiceNo = `INV-${format(new Date(order.created_at), "yyyyMMdd")}-${String(order.order_number).padStart(4, "0")}`;
 
   const handlePrint = () => window.print();
 
@@ -60,9 +66,20 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
             )}
             <p className="font-display font-semibold text-base">{restaurant.name}</p>
             {restaurant.tagline && <p className="text-xs text-muted-foreground">{restaurant.tagline}</p>}
+            {restaurant.address && <p className="text-[10px] text-muted-foreground mt-0.5">{restaurant.address}</p>}
+            {(restaurant.phone || restaurant.email) && (
+              <p className="text-[10px] text-muted-foreground">
+                {restaurant.phone}{restaurant.phone && restaurant.email ? " · " : ""}{restaurant.email}
+              </p>
+            )}
+            {restaurant.gst_number && (
+              <p className="text-[10px] font-semibold mt-0.5">GSTIN: {restaurant.gst_number}</p>
+            )}
+            <p className="text-[10px] uppercase tracking-wider mt-1 font-semibold">Tax Invoice</p>
           </div>
 
           <div className="text-xs space-y-0.5 mb-2">
+            <div className="flex justify-between"><span>Invoice #</span><span className="font-semibold">{invoiceNo}</span></div>
             <div className="flex justify-between"><span>Order #</span><span className="font-semibold">{order.order_number}</span></div>
             <div className="flex justify-between"><span>Date</span><span>{format(new Date(order.created_at), "PP p")}</span></div>
             {order.customer_name && <div className="flex justify-between"><span>Customer</span><span>{order.customer_name}</span></div>}
@@ -90,7 +107,14 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
             {Number(order.discount) > 0 && (
               <div className="flex justify-between"><span>Discount</span><span>−{symbol}{Number(order.discount).toFixed(2)}</span></div>
             )}
-            <div className="flex justify-between"><span>Tax ({taxPct}%)</span><span>{symbol}{Number(order.tax).toFixed(2)}</span></div>
+            {restaurant.gst_number ? (
+              <>
+                <div className="flex justify-between"><span>CGST ({(taxPct / 2).toFixed(2)}%)</span><span>{symbol}{halfTax.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>SGST ({(taxPct / 2).toFixed(2)}%)</span><span>{symbol}{halfTax.toFixed(2)}</span></div>
+              </>
+            ) : (
+              <div className="flex justify-between"><span>Tax ({taxPct}%)</span><span>{symbol}{Number(order.tax).toFixed(2)}</span></div>
+            )}
             <div className="flex justify-between font-bold text-sm border-t border-dashed pt-1 mt-1">
               <span>TOTAL</span><span>{symbol}{Number(order.total).toFixed(2)}</span>
             </div>
@@ -98,6 +122,7 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
 
           <div className="text-center text-xs text-muted-foreground mt-3 border-t border-dashed pt-2">
             <p>Thank you for visiting!</p>
+            {restaurant.gst_number && <p className="text-[10px] mt-1">This is a computer-generated GST invoice.</p>}
             <p className="mt-1">Powered by Quick Menu Hub</p>
           </div>
         </div>
