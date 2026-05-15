@@ -16,7 +16,7 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Coffee, ShoppingCart, ListOrdered, BookOpen, BarChart3, Settings, LogOut, Loader2, ArrowLeft } from "lucide-react";
+import { Coffee, ShoppingCart, ListOrdered, BookOpen, BarChart3, Settings, LogOut, Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle } from "lucide-react";
@@ -35,6 +35,7 @@ function NavItems({ role, restaurantId }: { role: string; restaurantId: string }
     { to: `/cafe/${restaurantId}/pos`, label: "POS", icon: ShoppingCart },
     { to: `/cafe/${restaurantId}/orders`, label: "Orders", icon: ListOrdered },
     { to: `/cafe/${restaurantId}/menu`, label: "Menu", icon: BookOpen },
+    { to: `/cafe/${restaurantId}/posters`, label: "Posters", icon: ImageIcon },
     { to: `/cafe/${restaurantId}/reports`, label: "Reports", icon: BarChart3 },
     { to: `/cafe/${restaurantId}/settings`, label: "Settings", icon: Settings },
   ];
