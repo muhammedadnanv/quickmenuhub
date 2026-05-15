@@ -228,6 +228,59 @@ export type Database = {
           },
         ]
       }
+      posters: {
+        Row: {
+          accent_color: string
+          cafe_id: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          created_by: string
+          id: string
+          item_ids: string[]
+          theme_color: string
+          title: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          accent_color?: string
+          cafe_id: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          item_ids?: string[]
+          theme_color?: string
+          title?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          accent_color?: string
+          cafe_id?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          item_ids?: string[]
+          theme_color?: string
+          title?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posters_cafe_id_fkey"
+            columns: ["cafe_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       restaurants: {
         Row: {
           address: string | null

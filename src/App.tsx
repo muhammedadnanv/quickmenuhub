@@ -16,6 +16,7 @@ import MenuAdmin from "./pages/cafe/MenuAdmin";
 import Reports from "./pages/cafe/Reports";
 import CafeSettings from "./pages/cafe/CafeSettings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Posters from "./pages/cafe/Posters";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="pos" element={<POS />} />
               <Route path="orders" element={<OrdersPage />} />
               <Route path="menu" element={<MenuAdmin />} />
+              <Route path="posters" element={<Posters />} />
               <Route path="reports" element={<Reports />} />
               <Route path="settings" element={<CafeSettings />} />
             </Route>

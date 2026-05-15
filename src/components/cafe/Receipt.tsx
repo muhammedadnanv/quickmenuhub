@@ -1,7 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Printer, Download } from "lucide-react";
 import { format } from "date-fns";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface OrderLine {
   id: string;
@@ -51,6 +53,30 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
   const invoiceNo = `INV-${format(new Date(order.created_at), "yyyyMMdd")}-${String(order.order_number).padStart(4, "0")}`;
 
   const handlePrint = () => window.print();
+  const [downloading, setDownloading] = useState(false);
+  const handleDownloadPDF = async () => {
+    const node = document.getElementById("receipt-print-area");
+    if (!node) return;
+    setDownloading(true);
+    try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+      const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#ffffff" });
+      const imgData = canvas.toDataURL("image/png");
+      // 80mm thermal-style PDF width, height auto from aspect ratio
+      const pdfWidth = 80;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdf = new jsPDF({ unit: "mm", format: [pdfWidth, pdfHeight], orientation: "portrait" });
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`${invoiceNo}.pdf`);
+    } catch (e: any) {
+      toast.error("Could not generate PDF: " + (e?.message || "unknown"));
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,9 +153,14 @@ export default function Receipt({ open, onOpenChange, order, items, restaurant }
           </div>
         </div>
 
-        <div className="flex gap-2 p-3 border-t print:hidden">
-          <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>Close</Button>
-          <Button className="flex-1" onClick={handlePrint}><Printer className="w-4 h-4 mr-2" />Print</Button>
+        <div className="flex flex-col gap-2 p-3 border-t print:hidden">
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={handleDownloadPDF} disabled={downloading}>
+              <Download className="w-4 h-4 mr-2" />{downloading ? "Generating…" : "Download PDF"}
+            </Button>
+            <Button className="flex-1" onClick={handlePrint}><Printer className="w-4 h-4 mr-2" />Print</Button>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>Close</Button>
         </div>
       </DialogContent>
     </Dialog>
