@@ -13,6 +13,9 @@ import { QRCodeSVG } from "qrcode.react";
 import { Plus, Trash2, Loader2, Download, Eye, Mail, Phone, Globe } from "lucide-react";
 import { toast } from "sonner";
 
+type PosterSize = "a4" | "instagram";
+const SIZE_LABELS: Record<PosterSize, string> = { a4: "A4 Print", instagram: "Instagram (1:1)" };
+
 interface MenuItem { id: string; name: string; price: number; description: string | null; }
 interface Poster {
   id: string; title: string; theme_color: string; accent_color: string;
@@ -38,6 +41,7 @@ export default function Posters() {
   const [editing, setEditing] = useState<Partial<Poster> | null>(null);
   const [previewing, setPreviewing] = useState<Poster | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewSize, setPreviewSize] = useState<PosterSize>("a4");
 
   const load = async () => {
     const [{ data: p }, { data: i }] = await Promise.all([
@@ -93,7 +97,7 @@ export default function Posters() {
     setEditing({ ...editing, item_ids: cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id] });
   };
 
-  const downloadPoster = async (poster: Poster) => {
+  const downloadPoster = async (poster: Poster, size: PosterSize) => {
     const node = document.getElementById(`poster-render-${poster.id}`);
     if (!node) { toast.error("Open preview first"); return; }
     try {
@@ -101,10 +105,25 @@ export default function Posters() {
         import("html2canvas"), import("jspdf"),
       ]);
       const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
-      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
-      const w = 210, h = (canvas.height * w) / canvas.width;
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, w, Math.min(h, 297));
-      pdf.save(`${poster.title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
+      const fileBase = poster.title.replace(/\s+/g, "-").toLowerCase();
+      if (size === "instagram") {
+        // Export Instagram-ready PNG (1080x1080)
+        const out = document.createElement("canvas");
+        out.width = 1080; out.height = 1080;
+        const ctx = out.getContext("2d")!;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, 1080, 1080);
+        ctx.drawImage(canvas, 0, 0, 1080, 1080);
+        const link = document.createElement("a");
+        link.download = `${fileBase}-instagram.png`;
+        link.href = out.toDataURL("image/png");
+        link.click();
+      } else {
+        const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+        const w = 210, h = (canvas.height * w) / canvas.width;
+        pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, w, Math.min(h, 297));
+        pdf.save(`${fileBase}-a4.pdf`);
+      }
     } catch (e: any) { toast.error("PDF failed: " + e.message); }
   };
 
@@ -201,10 +220,21 @@ export default function Posters() {
           <DialogHeader><DialogTitle>{previewing?.title}</DialogTitle></DialogHeader>
           {previewing && (
             <>
-              <PosterRender poster={previewing} restaurant={restaurant} items={items} />
+              <div className="flex items-center gap-2 pb-2">
+                <Label className="text-sm">Format:</Label>
+                {(["a4", "instagram"] as PosterSize[]).map((s) => (
+                  <Button key={s} size="sm" variant={previewSize === s ? "default" : "outline"} onClick={() => setPreviewSize(s)}>
+                    {SIZE_LABELS[s]}
+                  </Button>
+                ))}
+              </div>
+              <PosterRender poster={previewing} restaurant={restaurant} items={items} size={previewSize} />
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <Button variant="outline" onClick={() => setPreviewing(null)}>Close</Button>
-                <Button onClick={() => downloadPoster(previewing)}><Download className="w-4 h-4 mr-2" />Download PDF</Button>
+                <Button onClick={() => downloadPoster(previewing, previewSize)}>
+                  <Download className="w-4 h-4 mr-2" />
+                  {previewSize === "a4" ? "Download PDF" : "Download PNG"}
+                </Button>
               </div>
             </>
           )}
@@ -214,51 +244,63 @@ export default function Posters() {
   );
 }
 
-function PosterRender({ poster, restaurant, items }: { poster: Poster; restaurant: any; items: MenuItem[] }) {
+function PosterRender({ poster, restaurant, items, size = "a4" }: { poster: Poster; restaurant: any; items: MenuItem[]; size?: PosterSize }) {
   const featured = items.filter(i => poster.item_ids.includes(i.id));
   const menuUrl = `${window.location.origin}/menu/${restaurant.slug}`;
   const symbol = restaurant.currency_symbol || "₹";
+  const isInsta = size === "instagram";
+  const maxItems = isInsta ? 8 : 12;
   return (
-    <div id={`poster-render-${poster.id}`} className="bg-white" style={{ width: "100%", aspectRatio: "210/297", color: poster.accent_color, fontFamily: "system-ui, sans-serif" }}>
+    <div
+      id={`poster-render-${poster.id}`}
+      className="bg-white mx-auto"
+      style={{
+        width: "100%",
+        maxWidth: isInsta ? 540 : "100%",
+        aspectRatio: isInsta ? "1/1" : "210/297",
+        color: poster.accent_color,
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
       <div className="h-full flex flex-col">
         {/* Header band */}
-        <div className="px-6 py-5 flex items-center gap-3" style={{ background: poster.theme_color, color: "#fff" }}>
-          {restaurant.logo_url && <img src={restaurant.logo_url} alt="" crossOrigin="anonymous" className="w-12 h-12 rounded-full bg-white object-contain p-1" />}
+        <div className={`flex items-center gap-3 ${isInsta ? "px-5 py-3" : "px-6 py-5"}`} style={{ background: poster.theme_color, color: "#fff" }}>
+          {restaurant.logo_url && <img src={restaurant.logo_url} alt="" crossOrigin="anonymous" className={`${isInsta ? "w-10 h-10" : "w-12 h-12"} rounded-full bg-white object-contain p-1`} />}
           <div className="flex-1 min-w-0">
             <div className="text-xs uppercase tracking-widest opacity-80">Quick Menu Hub</div>
-            <div className="font-bold text-2xl leading-tight truncate">{restaurant.name}</div>
+            <div className={`font-bold leading-tight truncate ${isInsta ? "text-xl" : "text-2xl"}`}>{restaurant.name}</div>
             {restaurant.tagline && <div className="text-xs opacity-90 truncate">{restaurant.tagline}</div>}
           </div>
         </div>
 
         {/* Title */}
-        <div className="px-6 pt-5 pb-2 text-center">
-          <h2 className="font-bold text-3xl" style={{ color: poster.theme_color }}>{poster.title}</h2>
+        <div className={`text-center ${isInsta ? "px-5 pt-3 pb-1" : "px-6 pt-5 pb-2"}`}>
+          <h2 className={`font-bold ${isInsta ? "text-2xl" : "text-3xl"}`} style={{ color: poster.theme_color }}>{poster.title}</h2>
           <div className="h-0.5 w-16 mx-auto mt-2" style={{ background: poster.theme_color }} />
         </div>
 
         {/* Items */}
-        <div className="flex-1 px-6 py-3 overflow-hidden">
+        <div className={`flex-1 overflow-hidden ${isInsta ? "px-5 py-2" : "px-6 py-3"}`}>
           {featured.length === 0 ? (
             <p className="text-center text-sm opacity-60 mt-6">No items selected.</p>
           ) : (
-            <div className="space-y-2">
-              {featured.slice(0, 12).map(it => (
+            <div className={isInsta ? "space-y-1.5" : "space-y-2"}>
+              {featured.slice(0, maxItems).map(it => (
                 <div key={it.id} className="flex items-baseline gap-2">
-                  <span className="font-semibold text-sm">{it.name}</span>
+                  <span className={`font-semibold ${isInsta ? "text-xs" : "text-sm"}`}>{it.name}</span>
                   <span className="flex-1 border-b border-dotted opacity-30" />
-                  <span className="font-bold text-sm" style={{ color: poster.theme_color }}>{symbol}{Number(it.price).toFixed(2)}</span>
+                  <span className={`font-bold ${isInsta ? "text-xs" : "text-sm"}`} style={{ color: poster.theme_color }}>{symbol}{Number(it.price).toFixed(2)}</span>
                 </div>
               ))}
-              {featured.length > 12 && <p className="text-xs text-center opacity-60 pt-2">+ {featured.length - 12} more on the digital menu</p>}
+              {featured.length > maxItems && <p className="text-xs text-center opacity-60 pt-2">+ {featured.length - maxItems} more on the digital menu</p>}
             </div>
           )}
         </div>
 
         {/* Footer with QR + contact */}
-        <div className="px-6 py-4 grid grid-cols-[auto,1fr] gap-4 items-center" style={{ background: `${poster.theme_color}15` }}>
+        <div className={`grid grid-cols-[auto,1fr] gap-4 items-center ${isInsta ? "px-5 py-3" : "px-6 py-4"}`} style={{ background: `${poster.theme_color}15` }}>
           <div className="bg-white p-2 rounded">
-            <QRCodeSVG value={menuUrl} size={96} level="H" fgColor={poster.accent_color} />
+            <QRCodeSVG value={menuUrl} size={isInsta ? 72 : 96} level="H" fgColor={poster.accent_color} />
           </div>
           <div className="text-xs space-y-1">
             <div className="font-bold text-sm" style={{ color: poster.theme_color }}>Scan to view full menu</div>
