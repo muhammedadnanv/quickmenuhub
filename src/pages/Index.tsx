@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Coffee, ShoppingCart, BarChart3, Receipt, ShieldCheck, Crown, Check, ArrowRight } from "lucide-react";
+import { Coffee, ShoppingCart, BarChart3, Receipt, ShieldCheck, Crown, Check, ArrowRight, Phone, Mail, Instagram, Linkedin } from "lucide-react";
+
+const CONTACT_PHONE = "+91 96567 78508";
+const CONTACT_PHONE_TEL = "+919656778508";
+const INSTAGRAM_URL = "https://www.instagram.com/thetechcontractor.in/";
+const LINKEDIN_URL = "https://www.linkedin.com/in/muhammedadnanvv/";
 
 const Index = () => {
   return (
@@ -84,10 +89,54 @@ const Index = () => {
         </div>
       </section>
 
+      <section id="contact" className="py-20 bg-muted/40">
+        <div className="container max-w-3xl mx-auto px-4">
+          <div className="bg-card border border-border rounded-3xl p-8 md:p-12 text-center shadow-soft">
+            <Phone className="w-10 h-10 text-primary mx-auto mb-4" />
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">Contact us for onboarding</h2>
+            <p className="text-muted-foreground mb-6">
+              Talk to our team to get your café provisioned on Quick Menu Hub.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" asChild>
+                <a href={`tel:${CONTACT_PHONE_TEL}`}><Phone className="w-4 h-4 mr-2" />{CONTACT_PHONE}</a>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <a href={`https://wa.me/${CONTACT_PHONE_TEL.replace("+", "")}`} target="_blank" rel="noreferrer">
+                  WhatsApp us
+                </a>
+              </Button>
+            </div>
+            <div className="flex items-center justify-center gap-4 mt-6 text-sm text-muted-foreground">
+              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-primary">
+                <Instagram className="w-4 h-4" /> @thetechcontractor.in
+              </a>
+              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-primary">
+                <Linkedin className="w-4 h-4" /> Muhammed Adnan VV
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t border-border py-8">
-        <div className="container max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2"><Coffee className="w-4 h-4 text-primary" /><span className="font-display font-semibold text-foreground">Quick Menu Hub</span></div>
-          <p>Premium café & restaurant management · Powered by Razorpay</p>
+        <div className="container max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Coffee className="w-4 h-4 text-primary" />
+            <span className="font-display font-semibold text-foreground">Quick Menu Hub</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href={`tel:${CONTACT_PHONE_TEL}`} className="flex items-center gap-1 hover:text-primary">
+              <Phone className="w-4 h-4" /> {CONTACT_PHONE}
+            </a>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-primary">
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="hover:text-primary">
+              <Linkedin className="w-4 h-4" />
+            </a>
+          </div>
+          <p>Premium café management · Powered by Razorpay</p>
         </div>
       </footer>
     </div>
