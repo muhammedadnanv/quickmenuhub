@@ -17,6 +17,7 @@ import Reports from "./pages/cafe/Reports";
 import CafeSettings from "./pages/cafe/CafeSettings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Posters from "./pages/cafe/Posters";
+import Onboarding from "./pages/Onboarding";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/cafe/:restaurantId" element={<CafeLayout />}>
               <Route index element={<POS />} />
