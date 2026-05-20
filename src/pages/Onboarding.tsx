@@ -1,9 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Coffee, KeyRound, LogIn, QrCode, ShoppingCart, Phone, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function Onboarding() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading || !user) return;
+    (async () => {
+      const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+      if (role?.role === "super_admin") return navigate("/admin", { replace: true });
+      const { data: cafe } = await supabase.from("restaurants").select("id").eq("owner_id", user.id).maybeSingle();
+      if (cafe) navigate(`/cafe/${cafe.id}/pos`, { replace: true });
+    })();
+  }, [user, loading, navigate]);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
