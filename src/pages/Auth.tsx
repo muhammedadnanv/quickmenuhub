@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Crown, Coffee } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SYNTH_DOMAIN = "cafe.quickmenuhub.app";
 
@@ -81,7 +82,8 @@ const Auth = () => {
                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Sign in
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  Café accounts are created by the platform admin. Contact us to onboard.
+                  Café accounts are created by the platform admin.{" "}
+                  <Link to="/onboarding" className="text-primary underline underline-offset-2">New here? See onboarding</Link>
                 </p>
               </form>
             </TabsContent>

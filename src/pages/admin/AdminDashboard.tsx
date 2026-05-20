@@ -105,7 +105,7 @@ export default function AdminDashboard() {
         <div className="grid md:grid-cols-3 gap-4">
           <StatCard label="Total cafés" value={cafes.length} icon={<Coffee className="w-5 h-5" />} />
           <StatCard label="Active subscriptions" value={cafes.filter(c => c.subscription_status === "active" && c.current_period_end && new Date(c.current_period_end) > new Date()).length} icon={<ShieldCheck className="w-5 h-5 text-emerald-600" />} />
-          <StatCard label="Pending / expired" value={cafes.filter(c => !(c.subscription_status === "active" && c.current_period_end && new Date(c.current_period_end) > new Date())).length} icon={<AlertTriangle className="w-5 h-5 text-amber-600" />} />
+          <StatCard label="Expired" value={cafes.filter(c => !(c.subscription_status === "active" && c.current_period_end && new Date(c.current_period_end) > new Date())).length} icon={<AlertTriangle className="w-5 h-5 text-amber-600" />} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-display font-semibold truncate">{c.name}</p>
                           <Badge variant={active ? "default" : "secondary"} className={active ? "bg-emerald-600 hover:bg-emerald-600" : ""}>
-                            {active ? "Active" : c.subscription_status === "pending" ? "Pending" : "Expired"}
+                            {active ? "Active" : "Expired"}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground truncate">@{c.username} · {c.email} {c.phone ? `· ${c.phone}` : ""}</p>
