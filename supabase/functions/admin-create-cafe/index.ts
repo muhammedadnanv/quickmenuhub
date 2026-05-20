@@ -47,7 +47,9 @@ Deno.serve(async (req) => {
       slug = `${baseSlug}-${n}`;
     }
 
-    // Insert restaurant
+    // Insert restaurant — admin-created accounts are auto-approved & active for 30 days
+    const periodStart = new Date();
+    const periodEnd = new Date(periodStart.getTime() + 30 * 86400000);
     const { data: cafe, error: rErr } = await admin.from("restaurants").insert({
       name: body.brand_name,
       slug,
@@ -60,7 +62,8 @@ Deno.serve(async (req) => {
       website_url: body.website_url || null,
       upi_id: body.upi_id || null,
       tagline: body.tagline || "Fresh • Local • Delicious",
-      subscription_status: "pending",
+      subscription_status: "active",
+      current_period_end: periodEnd.toISOString(),
     }).select().single();
     if (rErr) {
       await admin.auth.admin.deleteUser(newUserId);
@@ -69,6 +72,16 @@ Deno.serve(async (req) => {
 
     // Assign cafe_owner role
     await admin.from("user_roles").insert({ user_id: newUserId, role: "cafe_owner" });
+
+    // Record an admin-activated subscription period so history is intact
+    await admin.from("subscriptions").insert({
+      cafe_id: cafe.id,
+      status: "active",
+      amount: 1599,
+      currency: "INR",
+      period_start: periodStart.toISOString(),
+      period_end: periodEnd.toISOString(),
+    });
 
     return json({ cafe });
   } catch (e: any) {
